@@ -3,13 +3,12 @@ import '../../public/assets/guide.css';
 import '../../public/assets/guide-motion.css';
 import '../../public/assets/chat-demo.css';
 import Link from 'next/link';
-import {useEffect} from 'react';
-import {initGuide} from './interaction';
 import WorkflowDeepDive from './WorkflowDeepDive';
+import DelegationDiagram from '../DelegationDiagram';
 import WorkflowExplorer from './WorkflowExplorer';
 import '../../public/assets/workflow-deep-dive.css';
 import '../../public/assets/exercise-results.css';
-export default function Guide(){useEffect(()=>initGuide(),[]);return (<>
+export default function Guide(){return (<>
 
 
 
@@ -18,11 +17,9 @@ export default function Guide(){useEffect(()=>initGuide(),[]);return (<>
     <section className="hero frame" aria-labelledby="title">
       <div className="hero-copy"><p className="kicker">A PROJECT-AWARE WORKFLOW HARNESS PLUGIN FOR CODEX</p><h1 id="title">Your codebase.<br />A clearer path.</h1><p className="hero-lead">Agentic Harness Orchestrator is a workflow harness plugin for Codex. It guides project discovery, scoped changes, review and reporting using the tools and permissions available to Codex.</p><Link className="primary-link" href="/guide/#explore">See how it works <span aria-hidden="true">↓</span></Link><p className="hero-note">Built around your project. Guided by your request.</p></div>
       <WorkflowExplorer />
-      <section className="swim-demo" aria-labelledby="swim-title">
-        <div className="swim-top"><div><p className="swim-overline">Illustrated example · interactive workflow</p><h2 id="swim-title">Follow a task through the harness</h2><p id="example-request">“Fix the login regression and verify the affected flow.”</p></div><div className="swim-badge"><span aria-hidden="true"></span> Example flow</div></div>
-        <div className="swim-legend" aria-label="Swimlane legend"><span>You</span><span>Codex + harness</span><span>Delivery roles</span><span>Task state</span></div>
-        <div className="demo-controls"><div className="workflow-pills" role="group" aria-label="Choose example workflow"><button type="button" className="workflow-pill is-selected" aria-pressed="true" data-flow="hotfix">Hotfix</button><button type="button" className="workflow-pill" aria-pressed="false" data-flow="feature">New feature</button></div><button type="button" className="playback" aria-pressed="false">▶ Play conversation</button></div>
-        <div className="chat-demo" aria-label="Illustrated conversation"><div className="chat-header"><span className="chat-avatar chat-avatar-main" aria-hidden="true">✳</span><div><strong>Harness session</strong><small>Illustrated conversation · not a live session</small></div><span className="chat-header-badge">Example</span></div><div className="chat-messages" id="chat-messages" aria-live="polite" aria-relevant="additions"></div><div className="chat-typing" hidden aria-hidden="true"><span></span><span></span><span></span></div><div className="chat-footer"><span>Conversation preview</span><span className="chat-step">Ready to play</span></div></div><p className="playback-status" aria-live="polite">Choose a workflow, then play the illustrated conversation.</p><details className="flow-detail"><summary>Explore the detailed swimlane</summary><div className="swim-stages" id="example-stages">
+      <section className="swim-demo" aria-label="Illustrated workflow">
+        <DelegationDiagram />
+        <details className="flow-detail"><summary>Explore a detailed hotfix example</summary><div className="swim-stages" id="example-stages">
           <article className="swim-stage"><h3>Request and intake</h3><div className="swim-row"><div className="swim-cell lane-you"><small>You</small><strong>Describe the problem</strong><p>Share symptoms, scope and what success should look like.</p></div><div className="swim-cell lane-codex"><small>Codex + harness</small><strong>Interpret the request</strong><p>Respect an explicitly selected hotfix; clarify missing information when needed.</p></div><div className="swim-cell lane-state"><small>Task state</small><strong>Define the objective</strong><p>Record scope, acceptance criteria and current status when storage is available.</p></div></div></article>
           <article className="swim-stage"><h3>Build project context</h3><div className="swim-row"><div className="swim-cell lane-codex"><small>Codex + harness</small><strong>Inspect the workspace</strong><p>Read relevant instructions, affected files, tooling and existing checks.</p></div><div className="swim-cell lane-role"><small>Delivery roles</small><strong>Trace the failure</strong><p>Identify the affected behavior and investigate the cause before changing code.</p></div><div className="swim-cell lane-state"><small>Task state</small><strong>Prepare the context</strong><p>Keep known facts, unknowns and the next valid action together.</p></div></div></article>
           <article className="swim-stage"><h3>Plan and hand off</h3><div className="swim-row"><div className="swim-cell lane-codex"><small>Codex + harness</small><strong>Choose a focused plan</strong><p>Build a role packet with the relevant scope, inputs and completion checks.</p></div><div className="swim-cell lane-role"><small>Delivery roles</small><strong>Receive the work</strong><p>The implementer inspects the context and plan before acting.</p></div><div className="swim-cell lane-state"><small>Task state</small><strong>Record the handoff</strong><p>Associate artifacts and their content identity with the receiving role.</p></div></div></article>
