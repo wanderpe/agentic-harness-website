@@ -14,7 +14,7 @@ Run `npm run lint` (zero warnings), `npm run typecheck` (strict TypeScript), and
 
 ## Deploy to Vercel
 
-Import the repository into Vercel and select this folder as the Root Directory (the folder containing `package.json`). Choose the Next.js framework preset and Node.js 22.x. The included `vercel.json` runs `npm run verify` before deployment and serves the static `out/` directory. No environment variables are required. Keep `package-lock.json` in Git for reproducible installs.
+Import the repository into Vercel and select this folder as the Root Directory (the folder containing `package.json`). Choose the Next.js framework preset and Node.js 22.x. The included `vercel.json` runs `npm run verify` before deployment and lets Vercel detect the Next.js output. No environment variables are required. Keep `package-lock.json` in Git for reproducible installs.
 
 This project uses static export. Features requiring a server, such as server actions or request-time rendering, would require changing that hosting choice.
 
