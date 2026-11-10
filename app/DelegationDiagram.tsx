@@ -4,12 +4,22 @@ import { useEffect, useRef, useState } from 'react';
 import '../public/assets/delegation-diagram.css';
 
 type Route = 'sequential' | 'delegated';
-const stages = [
-  { label: 'Request', title: 'Understand the task', short: 'Objective + project context', detail: 'Codex uses the harness guidance to establish the objective, scope and acceptance criteria, then discovers relevant project instructions, code and checks.', packet: 'Objective · scope · relevant files · checks', boundary: 'The project’s applicable workflow takes precedence.' },
-  { label: 'Route', title: 'Choose the roles', short: 'A route that fits the work', detail: 'The harness selects a proportional route and supplies role-specific guidance. Roles can be performed sequentially by one assistant or delegated when authorized and supported.', packet: 'Route · responsibilities · project context', boundary: 'A role packet describes work; it does not launch an agent.' },
-  { label: 'Handoff', title: 'Pass the work forward', short: 'Inputs + receiver acknowledgement', detail: 'The receiving role gets its scope, relevant artifacts, constraints and completion checks, then inspects the inputs before acknowledging the handoff.', packet: 'Sender · receiver · artifacts · content identity', boundary: 'Missing or stale inputs must be resolved before dependent work continues.' },
-  { label: 'Checkpoint', title: 'Carry state forward', short: 'Current step + evidence', detail: 'When storage is available, task state can record the current node, artifacts, evidence, handoffs and next action. A later session reconciles the record with the current project.', packet: 'Current state · evidence · next action', boundary: 'Without durable storage, state is reported in the conversation.' },
-  { label: 'Gates', title: 'Inspect the evidence', short: 'Review → QA → release decision', detail: 'The optional read-only guard checks supplied records and current content identity. Review, QA and release checks have different requirements; missing or failed checks are not treated as passing.', packet: 'Review · QA · acceptance · actual authorization', boundary: 'Fallback checks are advisory; they cannot prove tests ran or authenticate approvals.' },
+const steps = [
+  { title: 'Start with your request', text: 'Codex uses the harness guidance to gather the objective, project instructions, relevant code and available checks.', packet: 'Objective · scope · project context', role: -1 },
+  { title: 'Select a route', text: 'The harness selects a proportional route. Relevant roles can be handled by one assistant or delegated only when authorized and supported.', packet: 'Route · responsibilities · constraints', role: -1 },
+  { title: 'Architect', text: 'When needed, the architect identifies a practical design, reuse points and boundaries before substantial implementation.', packet: 'Design · scope · acceptance checks', role: 0 },
+  { title: 'Implementer', text: 'The implementer receives the relevant context and plan, inspects the handoff, and makes the authorized change using existing patterns.', packet: 'Inputs · scope · current change', role: 1 },
+  { title: 'Reviewer', text: 'The reviewer examines the actual change for concrete defects and risks. Review is independent only when a separate authorized reviewer performs it.', packet: 'Current diff · findings · review record', role: 2 },
+  { title: 'QA validator', text: 'QA checks acceptance criteria using appropriate available checks, reporting what passed, failed or could not be run.', packet: 'Check results · evidence · limitations', role: 3 },
+  { title: 'Checkpoint and evidence', text: 'When storage is available, a checkpoint can carry the current step, artifacts, evidence and next action. Changed content can invalidate earlier review and QA.', packet: 'Current state · content identity · next action', role: -1 },
+  { title: 'Release manager', text: 'When release is requested, the release manager checks current evidence and the actual authorization for the scope, revision, operation and destination.', packet: 'Review · QA · actual authorization', role: 4 },
+] as const;
+const roles = [
+  { name: 'Architect', symbol: '◇', short: 'Design and scope', step: 2 },
+  { name: 'Implementer', symbol: '⌘', short: 'Build the change', step: 3 },
+  { name: 'Reviewer', symbol: '◉', short: 'Inspect the diff', step: 4 },
+  { name: 'QA validator', symbol: '✓', short: 'Verify behavior', step: 5 },
+  { name: 'Release manager', symbol: '↗', short: 'Check readiness', step: 7 },
 ] as const;
 
 export default function DelegationDiagram() {
@@ -26,7 +36,7 @@ export default function DelegationDiagram() {
     const observer = new IntersectionObserver(([entry]) => {
       setInView(entry.isIntersecting);
       if (entry.isIntersecting && !started.current) { started.current = true; if (!motion.matches) setPlaying(true); }
-    }, { threshold: 0.2 });
+    }, { threshold: 0.15 });
     const onMotionChange = (event: MediaQueryListEvent) => { if (event.matches) setPlaying(false); };
     observer.observe(element);
     motion.addEventListener('change', onMotionChange);
@@ -34,27 +44,27 @@ export default function DelegationDiagram() {
   }, []);
   useEffect(() => {
     if (!playing || !inView) return;
-    const timer = window.setTimeout(() => { if (active === stages.length - 1) setPlaying(false); else setActive(active + 1); }, 7000);
+    const timer = window.setTimeout(() => { if (active === steps.length - 1) setPlaying(false); else setActive(active + 1); }, 6500);
     return () => window.clearTimeout(timer);
   }, [active, playing, inView]);
-  function togglePlayback() { if (playing) { setPlaying(false); return; } if (active === stages.length - 1) setActive(0); started.current = true; setPlaying(true); }
-  function selectStage(index: number) { started.current = true; setPlaying(false); setActive(index); }
-  const stage = stages[active];
+  function togglePlayback() { if (playing) { setPlaying(false); return; } if (active === steps.length - 1) setActive(0); started.current = true; setPlaying(true); }
+  function selectStep(index: number) { started.current = true; setPlaying(false); setActive(index); }
+  const step = steps[active];
   return <section ref={sectionRef} className="delegation home-frame" aria-labelledby="delegation-title">
-    <div className="delegation-intro"><div><p className="section-label">How the work moves</p><h2 id="delegation-title">From request<br />to evidence.</h2></div><p><strong>Follow the context through the harness.</strong> This illustration shows how an agent can route work, hand it off, carry state, and inspect evidence.</p></div>
-    <div className="flow-visual">
-      <div className="flow-toolbar"><div className="flow-route" role="group" aria-label="Choose a workflow example"><button type="button" aria-pressed={route === 'sequential'} onClick={() => setRoute('sequential')}>Sequential</button><button type="button" aria-pressed={route === 'delegated'} onClick={() => setRoute('delegated')}>Delegated</button></div><button className="flow-play" type="button" onClick={togglePlayback}>{playing ? 'Pause' : active === stages.length - 1 ? 'Replay' : 'Play'} <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span></button></div>
-      <div className="flow-route-note">{route === 'sequential' ? 'One assistant can perform relevant roles in sequence.' : 'Separate agents may receive work only when authorized and supported.'}</div>
-      <div className="flow-map" role="group" aria-label="Illustrative workflow stages">
-        {stages.map((item, index) => <div className="flow-step" key={item.label}>
-          {index > 0 && <div className={`flow-connector${active >= index ? ' is-reached' : ''}`} aria-hidden="true"><span key={`beam-${active}-${playing}-${inView}`} data-running={playing && inView && active === index - 1}/></div>}
-          <button type="button" className={`flow-node${active === index ? ' is-current' : ''}${active > index ? ' is-past' : ''}`} aria-pressed={active === index} onClick={() => selectStage(index)}><span className="flow-node-top"><span>{String(index + 1).padStart(2, '0')}</span><i aria-hidden="true"/></span><strong>{item.label}</strong><small>{item.short}</small>{index === 1 && <span className="flow-role">{route === 'delegated' ? 'Separate agents*' : 'One assistant'}</span>}</button>
-        </div>)}
-      </div>
-      <div className="flow-current-detail" aria-live={playing ? 'off' : 'polite'}><div className="flow-current-detail-heading"><span>Illustrative step {String(active + 1).padStart(2, '0')} / 05</span><h3>{stage.title}</h3><p>{stage.detail}</p></div><div className="flow-packet"><span>What moves forward</span><p>{stage.packet}</p><span>Boundary</span><p>{stage.boundary}</p></div></div>
-      {active === 4 && <div className="flow-gates"><span>Review <small>context + receipts</small></span><span>QA <small>current review</small></span><span>Release <small>QA + authorization</small></span></div>}
-      <div className="flow-timeline" aria-hidden="true"><span key={`progress-${active}-${playing}-${inView}`} data-running={playing && inView}/></div>
+    <div className="delegation-intro"><div><p className="section-label">How the work moves</p><h2 id="delegation-title">One request.<br />A clearer path.</h2></div><p><strong>Follow the context.</strong> The harness guides the work through relevant roles, handoffs and evidence checks. Choose a route to see the difference.</p></div>
+    <div className="route-toolbar"><div className="route-switch" role="group" aria-label="Choose an example route"><button type="button" aria-pressed={route === 'sequential'} onClick={() => setRoute('sequential')}>Sequential</button><button type="button" aria-pressed={route === 'delegated'} onClick={() => setRoute('delegated')}>Delegated</button></div><button className="route-play" type="button" onClick={togglePlayback}>{playing ? 'Pause' : active === steps.length - 1 ? 'Replay' : 'Play'} <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span></button></div>
+    <div className="branch-diagram" aria-label="Illustrative request, route and evidence flow">
+      <svg key={`${route}-${active}`} className="branch-lines" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true"><path className={route === 'sequential' ? 'selected-branch' : ''} d="M190 142 H245 C320 142 300 65 370 65 H420"/><path className={route === 'delegated' ? 'selected-branch' : ''} d="M190 158 H245 C320 158 300 235 370 235 H420"/><path className={route === 'sequential' ? 'selected-branch' : ''} d="M560 65 H610 C680 65 660 142 730 142 H770"/><path className={route === 'delegated' ? 'selected-branch' : ''} d="M560 235 H610 C680 235 660 158 730 158 H770"/></svg>
+      <div className={`branch-request${active === 0 ? ' is-lit' : ''}`}><span>YOUR REQUEST</span><strong>Build, fix, or review</strong><small>Project context + scope</small></div>
+      <div className={`branch-mode branch-sequential${route === 'sequential' ? ' is-selected' : ''}`}><span>SEQUENTIAL</span><div className="branch-hub"><i aria-hidden="true">◉</i></div><small>One assistant</small></div>
+      <div className={`branch-mode branch-delegated${route === 'delegated' ? ' is-selected' : ''}`}><span>DELEGATED</span><div className="branch-hub"><i aria-hidden="true">◉ ◉ ◉</i></div><small>Separate agents, when supported</small></div>
+      <button type="button" className={`branch-output${active >= 6 ? ' is-lit' : ''}`} aria-pressed={active === 6} onClick={() => selectStep(6)}><span>WORK + EVIDENCE</span><strong>Handoff and checks</strong><small>Explore checkpoint · review · QA</small></button>
     </div>
-    <p className="delegation-footnote">Illustration, not a live task. *Delegation requires authorization and host support. State and fallback checks are advisory unless a project or host enforces them; changed content can invalidate prior evidence. Release is a separate decision.</p>
+    <div className="branch-caption">{route === 'sequential' ? 'The same assistant can carry out the relevant roles in sequence.' : 'Separate agents can receive roles only when delegation is authorized and the host supports it.'}</div>
+    <div className="role-heading"><span>THE DELIVERY ROLES</span><span>Choose a card to explore</span></div>
+    <div className="role-cards" role="group" aria-label="Delivery role examples">{roles.map((role, index) => <button key={role.name} type="button" className={`delivery-card${step.role === index ? ' is-active' : ''}`} aria-pressed={step.role === index} onClick={() => selectStep(role.step)}><span className="delivery-icon" aria-hidden="true">{role.symbol}</span><strong>{role.name}</strong><small>{role.short}</small>{index === 4 && <span className="delivery-optional">When release is requested</span>}</button>)}</div>
+    <div className="branch-detail" aria-live={playing ? 'off' : 'polite'}><div><span>ILLUSTRATIVE STEP {String(active + 1).padStart(2, '0')} / 08</span><h3>{step.title}</h3><p>{step.text}</p></div><div className="handoff-packet"><span>WHAT MOVES FORWARD</span><p>{step.packet}</p><span>STATE AND GATES</span><p>Missing or stale evidence needs attention. Fallback checks are advisory and cannot prove tests ran or authenticate approvals.</p></div></div>
+    <div className="branch-progress" aria-hidden="true"><span key={`${active}-${playing}-${inView}`} data-running={playing && inView}/></div>
+    <p className="delegation-footnote">Illustration, not a live run. Roles depend on the task; a role packet does not launch an agent. Delegation requires authorization and host support. Release is a separate decision.</p>
   </section>;
 }
