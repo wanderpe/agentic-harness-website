@@ -17,14 +17,17 @@ const commands = [
 
 export default function PromptCommands() {
   const [status, setStatus] = useState('');
+  const [copied, setCopied] = useState('');
   async function copy(prompt: string, title: string) {
     try {
       if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
       await navigator.clipboard.writeText(prompt);
+      setCopied(title);
       setStatus(`${title} request copied. Paste it into your Codex chat and replace the placeholders.`);
     } catch {
+      setCopied('');
       setStatus('Copy is unavailable in this browser. Select the example text and copy it manually.');
     }
   }
-  return <div className="prompt-reference"><div className="prompt-intro"><p className="eyebrow">COPY & ADAPT</p><h3>Requests you can use in Codex.</h3><p>Copy an example into a Codex chat after installing the plugin. Replace the bracketed text with your task. These are natural-language requests, not built-in slash commands; the named skill is relevant guidance that Codex may select.</p></div><div className="prompt-list">{commands.map(item => <article key={item.title}><div className="prompt-head"><div><span>RELEVANT SKILL · {item.skill}</span><h4>{item.title}</h4></div><button type="button" onClick={() => copy(item.prompt, item.title)} aria-label={`Copy ${item.title} request`}>Copy <span aria-hidden="true">↗</span></button></div><p>{item.description}</p><pre><code>{item.prompt}</code></pre></article>)}</div><p className="prompt-status" role="status" aria-live="polite">{status}</p><p className="prompt-footnote">Available skills and behavior depend on the installed plugin version, the host, project instructions and the tools and permissions Codex can access.</p></div>;
+  return <div className="prompt-reference"><div className="prompt-intro"><p className="eyebrow">COPY & ADAPT</p><h3>Requests you can use in Codex.</h3><p>Copy an example into a Codex chat after installing the plugin. Replace the bracketed text with your task. These are natural-language requests, not built-in slash commands; the named skill is relevant guidance that Codex may select.</p></div><div className="prompt-list">{commands.map(item => <article key={item.title}><div className="prompt-head"><div><span>RELEVANT SKILL · {item.skill}</span><h4>{item.title}</h4></div><button type="button" onClick={() => copy(item.prompt, item.title)} aria-label={`Copy ${item.title} request`}>{copied === item.title ? 'Copied ✓' : 'Copy ↗'}</button></div><p>{item.description}</p><pre><code>{item.prompt}</code></pre></article>)}</div><p className="prompt-status" role="status" aria-live="polite">{status}</p><p className="prompt-footnote">Available skills and behavior depend on the installed plugin version, the host, project instructions and the tools and permissions Codex can access.</p></div>;
 }

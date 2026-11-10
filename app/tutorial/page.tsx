@@ -17,7 +17,7 @@ const skills = [
 ];
 
 export default function Tutorial() {
-  return <div className="tutorial"><main>
+  return <div className="tutorial"><main id="main">
     <section className="tutorial-hero"><p className="eyebrow">GET STARTED / VERSION 0.6.0 PREVIEW</p><h1>From download<br />to your first task.</h1><p>Install Agentic Harness Orchestrator, a workflow harness plugin for Codex, open a project, and give Codex a clear job. This guide walks through the setup and the workflows you can ask for.</p><div className="tutorial-actions"><a className="primary" href="/downloads/agentic-harness-codex-install-v0.6.0-preview.zip" download>Download installation bundle ↓</a><a href="#install">Start the tutorial ↘</a></div><p className="small">Already downloaded? Extract the bundle and continue below. The separate plugin ZIP is for inspection or backup; use the installation bundle for this guide.</p></section>
     <section className="tutorial-overview"><div><span>01</span><strong>Download & extract</strong><p>Keep the marketplace folder together.</p></div><div><span>02</span><strong>Add to Codex</strong><p>Run the setup commands once.</p></div><div><span>03</span><strong>Start a task</strong><p>Ask for the workflow you need.</p></div></section>
     <div className="tutorial-layout"><aside><span>ON THIS PAGE</span><a href="#install">01 &nbsp; Install the plugin</a><a href="#first-task">02 &nbsp; Your first task</a><a href="#commands">03 &nbsp; Commands & prompts</a><a href="#skills">04 &nbsp; Nine skills</a><a href="#troubleshoot">05 &nbsp; Troubleshooting</a></aside><div>

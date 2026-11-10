@@ -12,7 +12,7 @@ import '../../public/assets/exercise-results.css';
 export default function Guide(){useEffect(()=>initGuide(),[]);return (<>
 
 
-  <Link className="skip-link" href="/guide/#main">Skip to content</Link>
+
   
   <main id="main">
     <section className="hero frame" aria-labelledby="title">
