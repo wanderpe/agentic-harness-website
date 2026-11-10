@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import WorkflowInspector from './WorkflowInspector';
 import '../public/assets/delegation-diagram.css';
 
 const paths = {
@@ -36,5 +37,6 @@ export default function DelegationDiagram() {
     </div>
     <div className="delegation-explanation" aria-live="polite"><span>{path.badge}</span><div><h3>{path.title}</h3><p>{path.description}</p></div><a href="/guide/#explore">Explore the workflow <span aria-hidden="true">↗</span></a></div>
     <p className="delegation-footnote">Illustrative example, not a live run. Roles depend on the task; actual delegation requires authorization, available tools, and host support. Release is a separate decision.</p>
+    <WorkflowInspector />
   </section>;
 }
