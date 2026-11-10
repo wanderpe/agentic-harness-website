@@ -1,0 +1,55 @@
+:root {
+  color-scheme: dark;
+  --background: #08090b;
+  --foreground: #f1f1f2;
+  --card: #17181b;
+  --card-foreground: var(--foreground);
+  --primary: #f1f1f2;
+  --primary-foreground: #101114;
+  --muted: #222328;
+  --muted-foreground: #aaaab3;
+  --border: #303036;
+  --ring: #b3b3bc;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --tone-0: var(--background);
+  --tone-1: #101114;
+  --tone-2: #222328;
+  --tone-3: #303036;
+  --tone-4: #414149;
+  --tone-5: #55555d;
+  --tone-6: #66666f;
+  --tone-7: #797982;
+  --tone-8: #8c8c95;
+  --tone-9: #a0a0aa;
+  --tone-10: #aaaab3;
+  --tone-11: #bdbdc5;
+  --tone-12: #ceced4;
+  --tone-13: #dddde1;
+  --tone-14: #e8e8eb;
+  --tone-15: var(--foreground);
+  --tone-16: #fafafa;
+}
+html, body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
+button, input, textarea, select { font-family: inherit; }
+
+/* Shared shell and foreground/surface pairs used by every route. */
+html:root { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
+html body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
+html body header.ah-header.ah-header { background: transparent; border-color: var(--border); color: var(--foreground); font-family: var(--font-sans); }
+html body header.ah-header.ah-header .ah-brand { color: var(--foreground); }
+html body header.ah-header.ah-header nav.ah-nav a { color: var(--muted-foreground); }
+html body header.ah-header.ah-header nav.ah-nav a:hover,
+html body header.ah-header.ah-header nav.ah-nav a[aria-current=page] { color: var(--foreground); }
+html body :is(.relationship,.evidence,.journal .next,.tutorial-end) { background: var(--card); color: var(--foreground); }
+html body :is(.relationship,.evidence,.journal .next,.tutorial-end) :is(h2,h3,strong) { color: var(--foreground); }
+html body :is(.relationship,.evidence,.journal .next,.tutorial-end) :is(p,span,.eyebrow,.section-label,.caption) { color: var(--muted-foreground); }
+html body .relationship .relationship-map .map-name { color: var(--foreground); }
+html body .evidence .evidence-panel { background: var(--muted); color: var(--foreground); }
+html body .evidence .evidence-panel .panel-title { color: var(--foreground); }
+html body .result-card, html body .comparison-grid>div { background: var(--card); color: var(--foreground); }
+html body .result-output { background: var(--muted); color: var(--foreground); }
+html body .result-output :is(.result-output-title,.result-expected,.result-pass,pre) { color: var(--foreground); border-color: var(--border); }
+html body .tutorial pre, html body .install-steps pre { background: var(--card); color: var(--foreground); border: 1px solid var(--border); }
+html body :is(.journal .next,.tutorial-end) a { color: var(--foreground); }
+html body :is(.journal .next,.tutorial-end) .primary,
+html body .journal .next .button.light { background: var(--primary); color: var(--primary-foreground); }
