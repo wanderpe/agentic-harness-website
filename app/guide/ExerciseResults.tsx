@@ -1,0 +1,9 @@
+import hotfixLog from '../../public/workflow-exercises/hotfix-log.json';
+import featureLog from '../../public/workflow-exercises/feature-log.json';
+import { hotfixBefore, hotfixAfter, featureBefore, featureAfter } from './exercise-output';
+
+type Entry = { step: string; detail: string };
+function ExerciseCard({ title, summary, entries, before, after }: { title: string; summary: string; entries: Entry[]; before: string; after: string }) {
+  return <article className="result-card"><div className="result-card-header"><div><span className="result-kicker">Sample exercise</span><h4>{title}</h4><p>{summary}</p></div><span className="result-badge">Checks passed</span></div><details className="result-detail"><summary>View the step-by-step log</summary><ol className="result-steps">{entries.map(({step,detail}) => <li key={step}><strong>{step}</strong><span>{detail}</span></li>)}</ol></details><details className="result-detail"><summary>View test output</summary><div className="result-output"><div className="result-output-title"><span>Baseline</span><span className="result-expected">Expected failure</span></div><pre><code>{before}</code></pre></div><div className="result-output"><div className="result-output-title"><span>After the change</span><span className="result-pass">Passed</span></div><pre><code>{after}</code></pre></div><p className="result-note">Machine-specific paths in the original output have been replaced with [sample].</p></details></article>;
+}
+export default function ExerciseResults() {return <div className="result-grid"><ExerciseCard title="Hotfix · case normalization" summary="One failing regression test → one passing test" entries={hotfixLog} before={hotfixBefore} after={hotfixAfter}/><ExerciseCard title="Feature · greeting fallback" summary="A failing new behavior → two passing tests" entries={featureLog} before={featureBefore} after={featureAfter}/></div>}

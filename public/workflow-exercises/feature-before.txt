@@ -1,0 +1,36 @@
+✔ greeting remains compatible (1.2838ms)
+✖ empty name receives a default (2.8887ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 174.2272
+
+✖ failing tests:
+
+test at index.test.cjs:1:189
+✖ empty name receives a default (2.8887ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'Hello, '
+  - 'Hello, friend'
+            ^
+  
+      at TestContext.<anonymous> ([sample]/index.test.cjs:1:237)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Hello, ',
+    expected: 'Hello, friend',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

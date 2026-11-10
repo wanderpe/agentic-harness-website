@@ -1,0 +1,30 @@
+✖ normalizes case and spacing (2.1844ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 164.6365
+
+✖ failing tests:
+
+test at index.test.cjs:1:113
+✖ normalizes case and spacing (2.1844ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'ADA' !== 'ada'
+  
+      at TestContext.<anonymous> ([sample]/index.test.cjs:1:159)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ADA',
+    expected: 'ada',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

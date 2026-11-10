@@ -1,0 +1,31 @@
+(() => {
+  const stages=document.querySelector('#example-stages'), chat=document.querySelector('#chat-messages'), status=document.querySelector('.playback-status'), label=document.querySelector('.chat-step'), typing=document.querySelector('.chat-typing'), play=document.querySelector('.playback'), request=document.querySelector('#example-request'), tabs=[...document.querySelectorAll('.workflow-pill')];
+  if(!stages||!chat||!status||!play||!request)return;
+  const hotfix=stages.innerHTML, feature=hotfix.replace('Describe the problem','Describe the feature').replace('Share symptoms, scope and what success should look like.','Share the desired capability, audience and success criteria.').replace('Respect an explicitly selected hotfix; clarify missing information when needed.','Respect the selected feature workflow and clarify missing requirements.').replace('Trace the failure','Explore existing patterns').replace('Identify the affected behavior and investigate the cause before changing code.','Find relevant features, interfaces and project conventions.').replace('Choose a focused plan','Design a practical approach').replace('Build a role packet with the relevant scope, inputs and completion checks.','The architect defines the design, boundaries and acceptance checks for the implementer.').replace('Make the scoped fix','Build the feature').replace('Use available tools and the project’s conventions to address the cause.','Implement the agreed behavior using the project’s existing patterns.').replace('the affected behavior','the new behavior');
+  const flows={hotfix:[
+    ['You','Fix the login regression and verify the affected flow.','Request'],
+    ['Orchestrator','I’ll use the hotfix path. First I’ll inspect the project instructions, reproduce the failure, and identify what changed.','Intake · objective and scope'],
+    ['Context','Login fails after submitting the form. Relevant files, reproduction steps, and existing checks are collected for the next role.','Context → investigation'],
+    ['Implementer','The failure points to the session response handling. I’ll make a focused fix using the project’s existing patterns.','Handoff · context and scope'],
+    ['Reviewer','I’ll inspect the actual change and flag any correctness or security concerns before it moves to QA.','Handoff · current change'],
+    ['QA validator','I’ll check the affected login flow and record which checks passed, failed, or could not run.','Handoff · acceptance criteria'],
+    ['Orchestrator','I’ll report the result and any remaining gaps. If the code changes, earlier review and QA may need to be repeated.','State · outcome and next action']
+  ],feature:[
+    ['You','Add a profile settings page that follows the project’s patterns.','Request'],
+    ['Orchestrator','I’ll use the feature path. I’ll gather the project conventions, requirements, and acceptance criteria before planning.','Intake · objective and scope'],
+    ['Context','The project’s navigation, existing forms, validation, and available checks provide context for the design.','Context → design'],
+    ['Architect','I’ll define the page boundaries, reuse points, and acceptance checks, then pass that plan to implementation.','Handoff · design and constraints'],
+    ['Implementer','I’ll build the settings page using the agreed design and existing project patterns.','Handoff · plan and context'],
+    ['Reviewer','I’ll inspect the current changes for correctness, omissions, and relevant risks.','Handoff · current change'],
+    ['QA validator','I’ll check the acceptance criteria and record actual results and any unrun checks.','Handoff · acceptance criteria'],
+    ['Orchestrator','I’ll report the feature, verification, and remaining gaps. Release still depends on the appropriate authorization.','State · outcome and next action']
+  ]};
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');let flow='hotfix',index=0,timer=null;
+  function stop(){clearTimeout(timer);timer=null;typing.hidden=true;play.textContent=index>=flows[flow].length?'↺ Replay conversation':index?'▶ Resume conversation':'▶ Play conversation';play.setAttribute('aria-pressed','false');}
+  function message(item){const row=document.createElement('article');row.className='chat-message'+(item[0]==='You'?' from-user':'');const avatar=document.createElement('span');avatar.className='chat-avatar';avatar.setAttribute('aria-hidden','true');avatar.textContent=item[0]==='You'?'Y':item[0]==='Orchestrator'?'✳':item[0][0];const body=document.createElement('div');body.className='chat-message-body';const title=document.createElement('strong');title.textContent=item[0];const bubble=document.createElement('p');bubble.textContent=item[1];const meta=document.createElement('small');meta.textContent=item[2];body.append(title,bubble,meta);row.append(avatar,body);chat.append(row);chat.scrollTop=chat.scrollHeight;}
+  function next(){if(index>=flows[flow].length){stop();status.textContent='Conversation complete. This is an illustration, not a live task.';return;}typing.hidden=true;message(flows[flow][index++]);label.textContent=`${index} / ${flows[flow].length} messages`;if(index>=flows[flow].length){stop();status.textContent='Conversation complete. This is an illustration, not a live task.';return;}if(reduced.matches){stop();play.textContent='→ Next message';return;}typing.hidden=false;timer=setTimeout(next,1900);}
+  function reset(){stop();index=0;chat.replaceChildren();status.textContent='Choose a workflow, then play the illustrated conversation.';message(flows[flow][0]);index=1;label.textContent=`1 / ${flows[flow].length} messages`;}
+  tabs.forEach(tab=>tab.addEventListener('click',()=>{flow=tab.dataset.flow;tabs.forEach(t=>{const active=t===tab;t.classList.toggle('is-selected',active);t.setAttribute('aria-pressed',String(active));});stages.innerHTML=flow==='feature'?feature:hotfix;request.textContent='“'+flows[flow][0][1]+'”';reset();}));
+  play.addEventListener('click',()=>{if(timer){stop();status.textContent='Conversation paused.';return;}if(index>=flows[flow].length)reset();play.textContent='Ⅱ Pause conversation';play.setAttribute('aria-pressed','true');status.textContent='Playing an illustrated conversation.';next();});
+  reduced.addEventListener?.('change',stop);reset();
+})();
